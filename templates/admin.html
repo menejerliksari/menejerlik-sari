@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menejerlik sari Admin</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="admin-body">
+<div class="admin-wrap">
+    <h1>Menejerlik sari Admin Panel</h1>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Test qo'shish</h3>
+            <form method="post" action="/admin/add-test">
+                <input type="hidden" name="password" value="{{ password }}">
+                <input name="title" placeholder="Mavzu" required>
+                <textarea name="question" placeholder="Savol" required></textarea>
+                <input name="option_a" placeholder="A variant" required>
+                <input name="option_b" placeholder="B variant" required>
+                <input name="option_c" placeholder="C variant" required>
+                <input name="option_d" placeholder="D variant" required>
+                <input name="correct_option" placeholder="To'g'ri javob: A/B/C/D" required>
+                <button type="submit">Saqlash</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>Qo'llanma qo'shish</h3>
+            <form method="post" action="/admin/add-material">
+                <input type="hidden" name="password" value="{{ password }}">
+                <input name="title" placeholder="Sarlavha" required>
+                <textarea name="content" placeholder="Matn yoki link" required></textarea>
+                <button type="submit">Saqlash</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>Kurs qo'shish</h3>
+            <form method="post" action="/admin/add-course">
+                <input type="hidden" name="password" value="{{ password }}">
+                <input name="title" placeholder="Kurs nomi" required>
+                <textarea name="description" placeholder="Tavsif" required></textarea>
+                <button type="submit">Saqlash</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>Qo'lda balans qo'shish</h3>
+            <form method="post" action="/admin/add-balance">
+                <input type="hidden" name="password" value="{{ password }}">
+                <input name="telegram_id" placeholder="Telegram ID" required>
+                <input type="number" name="amount" placeholder="Summa" required>
+                <button type="submit">Qo'shish</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Foydalanuvchilar</h3>
+        {% for u in users %}
+        <div class="row-line">{{ u.full_name }} | {{ u.telegram_id }} | Balans: {{ u.balance }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        <h3>To'lov so'rovlari</h3>
+        {% for p in payments %}
+        <div class="row-line">
+            {{ p.telegram_id }} | {{ p.amount }} so'm | {{ p.status }} | {{ p.note }}
+            {% if p.status == 'kutilmoqda' %}
+            <form method="post" action="/admin/approve-payment" style="margin-top:8px">
+                <input type="hidden" name="password" value="{{ password }}">
+                <input type="hidden" name="payment_id" value="{{ p.id }}">
+                <button type="submit">Tasdiqlash</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        <h3>Test natijalari</h3>
+        {% for r in results %}
+        <div class="row-line">
+            {{ r.telegram_id }} | {{ r.title }} | Tanlangan: {{ r.selected_option }} | {% if r.is_correct %}To'g'ri{% else %}Noto'g'ri{% endif %} | {{ r.created_at }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>
